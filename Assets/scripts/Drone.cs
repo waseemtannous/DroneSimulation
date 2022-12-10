@@ -12,10 +12,10 @@ public class Drone : MonoBehaviour
     private bool dPressed = false;
 
     // get dimensions of "floor" object
-    private float floorWidth = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.x;
-    private float floorLength = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.z;
+    // private float floorWidth = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.x;
+    // private float floorLength = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.z;
 
-    private DroneMovements droneMovements = new DroneMovements();
+    // private DroneMovements droneMovements = new DroneMovements();
 
     // Start is called before the first frame update
     void Start()
@@ -68,28 +68,28 @@ public class Drone : MonoBehaviour
         if (wPressed)
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            droneMovements.sendCommand();
+            // droneMovements.sendCommand();
             wPressed = false;
             // droneMovements.wPressed = false;
         }
         if (sPressed)
         {
             transform.Translate(Vector3.back * speed * Time.deltaTime);
-            droneMovements.sendCommand();
+            // droneMovements.sendCommand();
             sPressed = false;
             // droneMovements.sPressed = false;
         }
         if (aPressed)
         {
             transform.Translate(Vector3.left * speed * Time.deltaTime);
-            droneMovements.sendCommand();
+            // droneMovements.sendCommand();
             aPressed = false;
             // droneMovements.aPressed = false;
         }
         if (dPressed)
         {
             transform.Translate(Vector3.right * speed * Time.deltaTime);
-            droneMovements.sendCommand();
+            // droneMovements.sendCommand();
             dPressed = false;
             // droneMovements.dPressed = false;
         }

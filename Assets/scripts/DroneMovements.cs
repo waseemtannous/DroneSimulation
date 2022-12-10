@@ -4,7 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Socket;
+// using Socket;
 
 
 public class DroneMovements{
@@ -31,7 +31,7 @@ public class DroneMovements{
     }
 
     public void landDrone(){
-        droneSocket.send("land".encode());
+        // droneSocket.send("land".encode());
     }
 
     public void sendCommand(){
@@ -60,7 +60,7 @@ public class DroneMovements{
         {
             leftRight = speed;
         }
-        string sendString = "rc {} {} {} {}".format(leftRight, forwardBack, 0, 0);
+        // string sendString = "rc {} {} {} {}".format(leftRight, forwardBack, 0, 0);
 
         
 
