@@ -1,26 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Net.Sockets;
+
+// use package to encode string in utf-8
+using System.Text;
+
 
 public class Drone : MonoBehaviour
 {
-    private float speed = 5.0f;
+
+    private string droneIP = "192.168.10.1";
+    private int dronePort = 8889;
+    // private string droneIP = "127.0.0.1";
+    // private int dronePort = 65432;
+
+    // speeds for drone movements
+    private const float DroneSpeed = 60.0f;
+    private const float speed = 5.0f;
 
     private bool wPressed = false;
     private bool sPressed = false;
     private bool aPressed = false;
     private bool dPressed = false;
 
-    // get dimensions of "floor" object
-    // private float floorWidth = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.x;
-    // private float floorLength = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.z;
-
-    // private DroneMovements droneMovements = new DroneMovements();
+    Socket droneSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        droneSocket.Connect(droneIP, dronePort);
+        sendCommand("command");
+        sendCommand("takeoff");
     }
 
     // Update is called once per frame
@@ -38,61 +49,91 @@ public class Drone : MonoBehaviour
         if (Input.GetKey(KeyCode.W) && droneZ < floorLength / 2)
         {
             wPressed = true;
-            // droneMovements.wPressed = true;
         }
         if (Input.GetKey(KeyCode.S) && droneZ > -floorLength / 2)
         {
             sPressed = true;
-            // droneMovements.sPressed = true;
         }
         if (Input.GetKey(KeyCode.A) && droneX > -floorWidth / 2)
         {
             aPressed = true;
-            // droneMovements.aPressed = true;
         }
         if (Input.GetKey(KeyCode.D) && droneX < floorWidth / 2)
         {
             dPressed = true;
-            // droneMovements.dPressed = true;
         }
 
         // if space is pressed then land drone
         if (Input.GetKey(KeyCode.Space))
         {
-            // droneMovements.landDrone();
+            landDrone();
         }
     }
 
     private void FixedUpdate() {
+        sendCommand();
         // check if w a s d are pressed and move accordingly
         if (wPressed)
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            // droneMovements.sendCommand();
             wPressed = false;
-            // droneMovements.wPressed = false;
         }
         if (sPressed)
         {
             transform.Translate(Vector3.back * speed * Time.deltaTime);
-            // droneMovements.sendCommand();
             sPressed = false;
-            // droneMovements.sPressed = false;
         }
         if (aPressed)
         {
             transform.Translate(Vector3.left * speed * Time.deltaTime);
-            // droneMovements.sendCommand();
             aPressed = false;
-            // droneMovements.aPressed = false;
         }
         if (dPressed)
         {
             transform.Translate(Vector3.right * speed * Time.deltaTime);
-            // droneMovements.sendCommand();
             dPressed = false;
-            // droneMovements.dPressed = false;
         }
         
+    }
+
+    public void sendCommand(string command){
+        droneSocket.Send(Encoding.UTF8.GetBytes(command));
+        // printthe command sent to the drone
+        print(command);
+    }
+
+    public void landDrone(){
+        sendCommand("land");
+    }
+
+    public void sendCommand(){
+        // if w is pressed then forwardBack is DroneSpeed
+        // if s is pressed then forwardBack is -DroneSpeed
+        // if neither w or s is pressed then forwardBack is 0
+        float forwardBack = 0;
+        if (wPressed)
+        {
+            forwardBack = DroneSpeed;
+        }
+        else if (sPressed)
+        {
+            forwardBack = -DroneSpeed;
+        }
+
+        // if a is pressed then leftRight is -DroneSpeed
+        // if d is pressed then leftRight is DroneSpeed
+        // if neither a or d is pressed then leftRight is 0
+        float leftRight = 0;
+        if (aPressed)
+        {
+            leftRight = -DroneSpeed;
+        }
+        else if (dPressed)
+        {
+            leftRight = DroneSpeed;
+        }
+        
+        string sendString = $"rc {leftRight} {forwardBack} {0} {0}";
+        sendCommand(sendString);
     }
 }
