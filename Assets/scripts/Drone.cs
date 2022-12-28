@@ -6,14 +6,18 @@ using System.Net.Sockets;
 // use package to encode string in utf-8
 using System.Text;
 
-
 public class Drone : MonoBehaviour
 {
+
+    private UdpClient client;
 
     private string droneIP = "192.168.10.1";
     private int dronePort = 8889;
     // private string droneIP = "127.0.0.1";
     // private int dronePort = 65432;
+
+    private string videoIP = "0.0.0.0";
+    private int videoPort = 11111;
 
     // speeds for drone movements
     private const float DroneSpeed = 60.0f;
@@ -24,6 +28,11 @@ public class Drone : MonoBehaviour
     private bool aPressed = false;
     private bool dPressed = false;
 
+    private bool upPressed = false;
+    private bool downPressed = false;
+    private bool leftPressed = false;
+    private bool rightPressed = false;
+
     Socket droneSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
     // Start is called before the first frame update
@@ -31,12 +40,51 @@ public class Drone : MonoBehaviour
     {
         droneSocket.Connect(droneIP, dronePort);
         sendCommand("command");
-        sendCommand("takeoff");
+        // sendCommand("takeoff");
+        // sleep for 5 seconds
+
+        // // get drone video stream
+        sendCommand("streamon");
+
+        // display video stream in unity using udp
+        // GameObject.Find("VideoPlayer").GetComponent<UnityEngine.Video.VideoPlayer>().url = "udp://@" + videoIP + ":" + videoPort;
+
+        client = new UdpClient();
+        client.Connect(droneIP, dronePort);
+    }
+
+    bool checkDronePosition(){
+        // get dimensions of "floor" object
+        float floorWidth = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.x;
+        float floorLength = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.z;
+
+        // get position of drone
+        float droneX = transform.position.x;
+        float droneZ = transform.position.z;
+
+        // check if drone is within bounds of floor
+        return droneZ <= floorLength / 2 && droneZ >= -floorLength / 2 && droneX >= -floorWidth / 2 && droneX <= floorWidth / 2;
+    }
+
+    bool checkEdge() {
+        // check if drone is at edge of floor
+        // get dimensions of "floor" object
+        float floorWidth = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.x;
+        float floorLength = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.z;
+
+        // get position of drone
+        float droneX = transform.position.x;
+        float droneZ = transform.position.z;
+
+        return droneZ == floorLength / 2 || droneZ == -floorLength / 2 || droneX == -floorWidth / 2 || droneX == floorWidth / 2;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // display video stream from udp client to VideoPlayer
+        
+
         // get dimensions of "floor" object
         float floorWidth = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.x;
         float floorLength = GameObject.Find("floor").GetComponent<Renderer>().bounds.size.z;
@@ -46,21 +94,39 @@ public class Drone : MonoBehaviour
         float droneZ = transform.position.z;
 
         // move drone with w a s d keys and check if drone is within bounds of floor
-        if (Input.GetKey(KeyCode.W) && droneZ < floorLength / 2)
+        if (Input.GetKey(KeyCode.W))
         {
             wPressed = true;
         }
-        if (Input.GetKey(KeyCode.S) && droneZ > -floorLength / 2)
+        if (Input.GetKey(KeyCode.S))
         {
             sPressed = true;
         }
-        if (Input.GetKey(KeyCode.A) && droneX > -floorWidth / 2)
+        if (Input.GetKey(KeyCode.A))
         {
             aPressed = true;
         }
-        if (Input.GetKey(KeyCode.D) && droneX < floorWidth / 2)
+        if (Input.GetKey(KeyCode.D))
         {
             dPressed = true;
+        }
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            upPressed = true;
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            downPressed = true;
+        }
+
+        // left and right arrow keys rotate drone
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            leftPressed = true;
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            rightPressed = true;
         }
 
         // if space is pressed then land drone
@@ -71,7 +137,7 @@ public class Drone : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        sendCommand();
+        // droneCommand();
         // check if w a s d are pressed and move accordingly
         if (wPressed)
         {
@@ -93,7 +159,28 @@ public class Drone : MonoBehaviour
             transform.Translate(Vector3.right * speed * Time.deltaTime);
             dPressed = false;
         }
-        
+        if (upPressed)
+        {
+            transform.Translate(Vector3.up * speed * Time.deltaTime);
+            upPressed = false;
+        }
+        if (downPressed)
+        {
+            transform.Translate(Vector3.down * speed * Time.deltaTime);
+            downPressed = false;
+        }
+
+        // left and right arrow keys rotate drone
+        if (leftPressed)
+        {
+            transform.Rotate(Vector3.up * speed * Time.deltaTime);
+            leftPressed = false;
+        }
+        if (rightPressed)
+        {
+            transform.Rotate(Vector3.down * speed * Time.deltaTime);
+            rightPressed = false;
+        }
     }
 
     public void sendCommand(string command){
@@ -106,7 +193,7 @@ public class Drone : MonoBehaviour
         sendCommand("land");
     }
 
-    public void sendCommand(){
+    public void droneCommand(){
         // if w is pressed then forwardBack is DroneSpeed
         // if s is pressed then forwardBack is -DroneSpeed
         // if neither w or s is pressed then forwardBack is 0
@@ -132,8 +219,28 @@ public class Drone : MonoBehaviour
         {
             leftRight = DroneSpeed;
         }
+
+        float upDown = 0;
+        if (upPressed)
+        {
+            upDown = DroneSpeed;
+        }
+        else if (downPressed)
+        {
+            upDown = -DroneSpeed;
+        }
+
+        float leftRightRot = 0;
+        if (leftPressed)
+        {
+            leftRightRot = -DroneSpeed;
+        }
+        else if (rightPressed)
+        {
+            leftRightRot = DroneSpeed;
+        }
         
-        string sendString = $"rc {leftRight} {forwardBack} {0} {0}";
+        string sendString = $"rc {leftRight} {forwardBack} {upDown} {leftRightRot}";
         sendCommand(sendString);
     }
 }
