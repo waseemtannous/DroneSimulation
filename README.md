@@ -25,3 +25,15 @@ Ran the program multiple times to match the speed of the drone with the speed of
 A video will be recorded in the next few days.
 
 total hours: ~8 hours
+
+---
+
+Added the ability to move the drone object in the environment using the arrow keys. The drone object can now be moved using the WASD keys and the arrow keys. Also, it moves in the space relative to it's local axis and not the global axis.
+
+Learned about the UDP protocol.
+
+Read through the djitello python library to understand the commands it sends to the drone and how it receives the video feed from the drone. Also, read through the documentation of the socket library to understand how to use it to send and receive data.
+
+Still not able to get the video feed from the drone. Will look into it in the next few days. Tried using the socket library to send and receive data but it didn't work.
+
+total hours: ~8 hours
