@@ -1,0 +1,64 @@
+// using UnityEngine;
+// using System.Collections;
+// using System.Net;
+// using System.Net.Sockets;
+// using System.Threading;
+
+
+// public class floor : MonoBehaviour
+// {
+
+//     public Texture2D receivedImage;
+//     private UdpClient client;
+//     private IPEndPoint remoteEP;
+
+//     public int portNumber = 11111;
+
+//     // Start is called before the first frame update
+//     void Start()
+//     {
+//         client = new UdpClient(portNumber);
+//         remoteEP = new IPEndPoint(IPAddress.Any, portNumber);
+//         // Thread receiveThread = new Thread(new ThreadStart(ReceiveFrames));
+//         // receiveThread.Start();
+//     }
+
+
+//     // Update is called once per frame
+//     void Update()
+//     {
+//         // byte[] data = client.Receive(ref remoteEP);
+//         // if (data.Length < 4) {
+//         //     return;
+//         // }
+//         // // normalize data
+//         // for (int i = 0; i < data.Length; i++) {
+//         //     data[i] = (byte)(data[i] / 255.0f);
+//         // }
+//         // for(int i = 0; i < 5; i++) {
+//         //     print(data[i]);
+//         // }
+
+//         // create new texture with 2x2 size with random data
+//         byte[] data =
+//         receivedImage = new Texture2D(2, 2);
+//         // receivedImage.LoadImage(data);
+//         // load data as grayscale image (1 channel)
+//         receivedImage.LoadRawTextureData(data);
+//         GetComponent<Renderer>().material.mainTexture = receivedImage;
+//     }
+
+//     private void ReceiveFrames()
+//     {
+//         while (true)
+//         {
+//             byte[] data = client.Receive(ref remoteEP);
+//             // convert data to jpeg
+//             print(data.Length);
+//             receivedImage = new Texture2D(2, 2);
+//             receivedImage.LoadImage(data);
+//             GetComponent<Renderer>().material.mainTexture = receivedImage;
+//         }
+//     }
+
+// }
