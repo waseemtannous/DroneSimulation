@@ -3,43 +3,40 @@ using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
+
+using OpenCvSharp;
+using OpenCvSharp.Unity;
+
+using UnityEngine.Video;
+
 
 
 public class floor : MonoBehaviour
 {
+    string udpUrl = "udp://192.168.10.2:11111";
+    private OpenCvSharp.VideoCapture capture;
+    private Texture2D texture;
 
-    public Texture2DArray receivedImage;
 
     // Start is called before the first frame update
     void Start()
     {
-        receivedImage = new Texture2DArray(1920, 1080, 1, TextureFormat.RGBA32, false);
-        GetComponent<Renderer>().material.mainTexture = receivedImage;
+        capture = new OpenCvSharp.VideoCapture(udpUrl);
+        texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+        GetComponent<Renderer>().material.mainTexture = texture;
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        // create new texture with 2x2 size with random data
-        // byte[] data = new byte[1920 * 1080];
-        // new System.Random().NextBytes(data);
-
-        Color32[] data = new Color32[1920 * 1080];
-        for (int i = 0; i < data.Length; i++)
+        Mat frame = new Mat();
+        if (capture.Read(frame) && !frame.Empty())
         {
-            // random data
-            data[i] = new Color32((byte)Random.Range(0, 255), (byte)Random.Range(0, 255), (byte)Random.Range(0, 255), 255);
+            byte[] jpegData = Cv2.ImEncode(".jpg", frame);
+            texture.LoadImage(jpegData);
         }
-        // create png from data
-        // load data as grayscale image (1 channel)
-        
-        // load data as grayscale image (1 channel)
-        // receivedImage.LoadRawTextureData(data);
-        // receivedImage.LoadImage(data);
-        receivedImage.SetPixels32(data, 0);
-
-        // apply texture
-        GetComponent<Renderer>().material.mainTexture = receivedImage;
     }
 }
+
