@@ -52,3 +52,9 @@ Then, started to learn how to implement a UDP client in C# and receive the video
 I've been reading through lots of articles and documentation on the internet to understand how to do this. I've also been watching videos on YouTube to understand more about receiving video streams and how to implement it in Unity and C# using the UDP protocol.
 
 Each week I worked for about 8-9 hours totaling to about 26 hours.
+
+---
+
+I've been working on receiving the video stream from the drone and display it in Unity. This week, I used the OpenCV for Unity library to decode the video stream and display it on a plane object in Unity. I used the VideoCapture component to capture the video stream from the drone and the MatToTexture component to convert the Mat object to a Texture2D object which was then attached to a Material object that was put on a plane object. This approach didn't work as expected. The video stream was not displayed on the plane object. I tried to debug it but couldn't figure out why it's not working. I've been reading through lots of articles and documentation on the internet to understand how to do this.
+
+total hours: 10 hours
