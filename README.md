@@ -60,3 +60,9 @@ I've been working on receiving the video stream from the drone and display it in
 I also tried reading an image from a local file and displaying it on the plane object. This worked. I read the image and converted it into bytes array to load it into the Texture2D object. Maybe the problem is with the video stream data. I'll try to figure it out in the next few days.
 
 total hours: 10 hours
+
+---
+
+After multiple tries and debugging, I was able to get the video stream from the drone and display it on a plane object in Unity. I used a workaround as I didn't want to hold the project any longer. after multiple tries using the methods above, I ended up creating a python script that uses the drone's library and opencv to capture the video stream and save the frames as images. I then loaded the images into Unity and displayed them on a plane object. This worked. Next week I'll be diving more into the VR side of the project and will be working from the lab to use the VR headset.
+
+total hours: 9 hours
