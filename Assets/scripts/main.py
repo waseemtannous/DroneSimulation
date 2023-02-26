@@ -1,19 +1,16 @@
-import tello
 import cv2
+from djitellopy import Tello
 
+drone = Tello()
 
-# Create a tello object
-drone = tello.Tello()
-drone.connect()
-
-drone.streamon()
-
-def get_frame_data(frame):
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-    return frame.tobytes()
-
+# drone.connect()
+# drone.streamoff()
+# drone.streamon()
 
 while True:
-    frame_read = drone.get_frame_read()
-    frame = frame_read.frame
-    update_frame(frame)
+    frame = drone.get_frame_read()
+    frame = frame.frame
+
+    # frame = cv2.flip(frame, 0)
+    cv2.imwrite("frame.jpg", frame)
+    print(drone.get_battery())

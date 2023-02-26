@@ -66,3 +66,17 @@ total hours: 10 hours
 After multiple tries and debugging, I was able to get the video stream from the drone and display it on a plane object in Unity. I used a workaround as I didn't want to hold the project any longer. after multiple tries using the methods above, I ended up creating a python script that uses the drone's library and opencv to capture the video stream and save the frames as images. I then loaded the images into Unity and displayed them on a plane object. This worked. Next week I'll be diving more into the VR side of the project and will be working from the lab to use the VR headset.
 
 total hours: 9 hours
+
+---
+
+This week, I started working on the VR side of the project. I used the Oculus Integration package to add the Oculus SDK to the project. I implemented some ways to solve the problem so that I could test them in the lab.
+
+total hours: 8 hours
+
+---
+
+Last week: I worked in the lab and tested the approaches I implemented earlier using the Meta Quest 2 VR headset. I displayed the video stream that is stationary in relative to the viewer. Each movement (left, right, forward, backward) of the viewer is translated to a movement of the drone in the environment.
+
+total hours: 9 hours
+
+Demo: https://drive.google.com/file/d/1iFrI3dwaMavrQDx3Y7_pP29DVTKNTzH9/view?usp=sharing
