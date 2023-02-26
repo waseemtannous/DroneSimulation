@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 using System.Net.Sockets;
 
 // use package to encode string in utf-8
@@ -34,12 +35,16 @@ public class Drone : MonoBehaviour
 
     Socket droneSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
+    // vr headset
+    private XRNode controllerNode = XRNode.LeftHand;
+    private InputDevice controller;
+
     // Start is called before the first frame update
     void Start()
     {
         droneSocket.Connect(droneIP, dronePort);
         sendCommand("command");
-        // sendCommand("takeoff");
+        sendCommand("takeoff");
         // sleep for 5 seconds
 
         // // get drone video stream
@@ -139,7 +144,7 @@ public class Drone : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        // droneCommand();
+        droneCommand();
         // check if w a s d are pressed and move accordingly
         if (wPressed)
         {
@@ -241,6 +246,12 @@ public class Drone : MonoBehaviour
         {
             leftRightRot = DroneSpeed;
         }
+
+        // get position of the HMD
+        Vector3 hmdPosition = InputTracking.GetLocalPosition(XRNode.Head);
+
+        // translate drone to position of HMD
+        transform.position = new Vector3(hmdPosition.x, hmdPosition.y, hmdPosition.z);
         
         string sendString = $"rc {leftRight} {forwardBack} {upDown} {leftRightRot}";
         print(sendString);
